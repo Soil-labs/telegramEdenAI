@@ -1,16 +1,23 @@
 {
-  "name": "telegramedenai",
+  "name": "soil-genisis",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "dev": "node app.js",
+    "start": "node app.js"
   },
-  "author": "",
+  "type": "module",
+  "keywords": [],
+  "author": "Miral Suthar",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.3.1",
-    "node-telegram-bot-api": "^0.61.0"
+    "axios": "^0.27.2",
+    "node-fetch": "^3.2.10"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.19"
   }
 }
