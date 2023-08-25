@@ -9,6 +9,7 @@ console.log("token = " , token)
 const bot = new TelegramBot(token, {polling: true});
 
 
+// ------------ Receive message and reply back -----------------------
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
 
@@ -18,3 +19,7 @@ bot.on('message', (msg) => {
     // send a message to the chat acknowledging receipt of their message
     bot.sendMessage(chatId, 'Received your message - ' + msg.text);
   });
+// ------------ Receive message and reply back -----------------------
+
+
+bot.sendMessage('2125809502', 'Hello again' );
