@@ -22,8 +22,38 @@ answer {
 }
 `;
 
-export async function findQueryResponses() {
+export async function checkUsersForTGConnection(filter) {
 
+  let res = await apiClient({
+    data: {
+      query: `mutation {
+                checkUsersForTGConnection(fields: {
+                  authNumberTGMessage: "${filter.authNumberTGMessage}",
+                  telegramID: "${filter.telegramID}",
+                  telegramChatID: "${filter.telegramChatID}"
+                }) {
+                  _id
+                  discordName
+                  conduct {
+                    telegram
+                    telegramChatID
+                    telegramConnectionCode
+                  }
+              }
+            }`,
+    },
+  }).catch((err) => {
+    console.log(err.response.data.errors);
+  });
+
+  if (res?.data?.data?.checkUsersForTGConnection) {
+    return res.data.data.checkUsersForTGConnection;
+  } else {
+    return [];
+  }
+}
+
+export async function findQueryResponses() {
 
   let res = await apiClient({
     data: {

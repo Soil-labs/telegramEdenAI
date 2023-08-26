@@ -14,9 +14,11 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
-    "node-fetch": "^3.2.10"
+    "node-fetch": "^3.2.10",
+    "node-telegram-bot-api": "^0.61.0"
   },
   "devDependencies": {
+    "@types/node-telegram-bot-api": "^0.61.7",
     "dotenv": "^16.0.1",
     "nodemon": "^2.0.19"
   }
