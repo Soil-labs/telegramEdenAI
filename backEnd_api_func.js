@@ -22,6 +22,40 @@ answer {
 }
 `;
 
+export async function findMember(filter) {
+  // filter = { _id, discordName,telegramChatID}
+
+  const textUpdate = filterToText(filter)
+
+  let res = await apiClient({
+    data: {
+      query: `query {
+                findMember(fields: {
+                  ${textUpdate}
+                }) {
+                  _id
+                  discordName
+                  conduct {
+                    telegram
+                    telegramChatID
+                    telegramConnectionCode
+                  }
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
+  });
+
+  if (res?.data?.data?.findMember) {
+    return res.data.data.findMember;
+  } else {
+    return [];
+  }
+}
+
 export async function checkUsersForTGConnection(filter) {
 
   let res = await apiClient({
@@ -43,7 +77,9 @@ export async function checkUsersForTGConnection(filter) {
             }`,
     },
   }).catch((err) => {
-    console.log(err.response.data.errors);
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
   });
 
   if (res?.data?.data?.checkUsersForTGConnection) {
@@ -53,21 +89,24 @@ export async function checkUsersForTGConnection(filter) {
   }
 }
 
-export async function findQueryResponses() {
+export async function findQueryResponses(filter) {
+
+  const textUpdate = filterToText(filter)
 
   let res = await apiClient({
     data: {
       query: `query {
                 findQueryResponses(fields: {
-                  sentFlag: false
-                  phase: QUERY
+                  ${textUpdate}
                 }) {
                 ${queryResponseFields}
               }
             }`,
     },
   }).catch((err) => {
-    console.log(err.response.data.errors);
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
   });
 
   if (res?.data?.data?.findQueryResponses) {
@@ -80,7 +119,9 @@ export async function findQueryResponses() {
 export async function updateQueryResponse(updateQuery) {
 
 
-  const textUpdate = updateQueryToText(updateQuery)
+  const textUpdate = filterToText(updateQuery)
+
+  console.log("textUpdate = " , textUpdate)
 
   let res = await apiClient({
     data: {
@@ -93,7 +134,9 @@ export async function updateQueryResponse(updateQuery) {
             }`,
     },
   }).catch((err) => {
-    console.log(err.response.data.errors);
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
   });
 
   if (res?.data?.data?.updateQueryResponse) {
@@ -103,44 +146,48 @@ export async function updateQueryResponse(updateQuery) {
   }
 }
 
-function updateQueryToText(updateQuery) {
-  let updateQueryText = "";
+function filterToText(filter) {
+  let filterText = "";
   
-  if (updateQuery._id) {
-    updateQueryText += `_id: "${updateQuery._id}"`;
+  if (filter._id) {
+    filterText += `_id: "${filter._id}"\n`;
   }
 
-  if (updateQuery.sentFlag) {
-    updateQueryText += `sentFlag: ${updateQuery.sentFlag}`;
+  if (filter.sentFlag != null) {
+    filterText += `sentFlag: ${filter.sentFlag}\n`;
   }
 
-  if (updateQuery.phase) {
-    updateQueryText += `phase: ${updateQuery.phase}`;
+  if (filter.phase) {
+    filterText += `phase: ${filter.phase}\n`;
   }
 
-  if (updateQuery.question) {
-    updateQueryText += `question: "${updateQuery.question}"`;
+  if (filter.question) {
+    filterText += `question: "${filter.question}"\n`;
   }
 
-  if (updateQuery.answer) {
-    updateQueryText += `answer: "${updateQuery.answer}"`;
+  if (filter.answer) {
+    filterText += `answer: "${filter.answer}"\n`;
   }
 
-  if (updateQuery.senderID) {
-    updateQueryText += `senderID: "${updateQuery.senderID}"`;
+  if (filter.senderID) {
+    filterText += `senderID: "${filter.senderID}"\n`;
   }
 
-  if (updateQuery.responderID) {
-    updateQueryText += `responderID: "${updateQuery.responderID}"`;
+  if (filter.responderID) {
+    filterText += `responderID: "${filter.responderID}"\n`;
   }
 
-  if (updateQuery.senderType) {
-    updateQueryText += `senderType: ${updateQuery.senderType}`;
+  if (filter.senderType) {
+    filterText += `senderType: ${filter.senderType}\n`;
   }
 
-  if (updateQuery.responderType) {
-    updateQueryText += `responderType: ${updateQuery.responderType}`;
+  if (filter.responderType) {
+    filterText += `responderType: ${filter.responderType}\n`;
   }
 
-  return updateQueryText;
+  if (filter.telegramChatID) {
+    filterText += `telegramChatID: "${filter.telegramChatID}"\n`;
+  }
+
+  return filterText;
 }

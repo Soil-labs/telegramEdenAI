@@ -1,5 +1,8 @@
 import {
     checkUsersForTGConnection,
+    findMember,
+    findQueryResponses,
+    updateQueryResponse,
   } from "./backEnd_api_func.js";
 
 export async function checkIfFirstMessageTGConnection(msgTG) {
@@ -42,4 +45,60 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
  
   }
+
+  export async function findChatIDforUser(conduct) {
+    // conduct = { positionID: "null", userID: '234' },
+    // or 
+    // conduct = { positionID: "234", userID: 'null' },
+
+    let res
+    if (conduct.positionID != null) {
+
+    } else if (conduct.userID != null) {
+      res = await findMember({
+        _id: conduct.userID
+      });
+      if (res?.conduct?.telegramChatID) {
+        return res.conduct.telegramChatID;
+      }
+    }
+ 
+  }
+
+  export async function findIfMessageIsAResponse(chatId,msg) {
+
+    let memberData = await findMember({
+        telegramChatID: chatId
+    });
+
+    console.log("memberData = " , memberData)
+
+    let findQueryResponsesRes = await findQueryResponses({
+        sentFlag: true,
+        phase: "QUERY",
+        responderType: "USER",
+        responderID: memberData._id,
+    });
+
+
+
+    if (findQueryResponsesRes.length > 0) {
+        let queryResponse = findQueryResponsesRes[0];
+        console.log("queryResponse = " , queryResponse)
+
+   
+        // --------------- update backend that message was sent ----------------
+        let res = await updateQueryResponse({
+            _id: queryResponse._id,
+            sentFlag: false,
+            answer: msg,
+            phase: "RESPONDED",
+        })
+        console.log("res = " , res)
+        // --------------- update backend that message was sent ----------------
+    }
+
+ 
+  }
+  
   
