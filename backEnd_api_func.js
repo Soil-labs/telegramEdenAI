@@ -56,6 +56,41 @@ export async function findMember(filter) {
   }
 }
 
+export async function findPosition(filter) {
+  // filter = { _id, discordName,telegramChatID}
+
+  const textUpdate = filterToText(filter)
+
+  let res = await apiClient({
+    data: {
+      query: `query {
+                findPosition(fields: {
+                  ${textUpdate}
+                }) {
+                  _id
+                  name
+                  conduct {
+                    telegram
+                    telegramChatID
+                    telegramConnectionCode
+                  }
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
+  });
+
+  if (res?.data?.data?.findPosition) {
+    return res.data.data.findPosition;
+  } else {
+    return [];
+  }
+}
+
+
 export async function checkUsersForTGConnection(filter) {
 
   let res = await apiClient({
@@ -67,12 +102,11 @@ export async function checkUsersForTGConnection(filter) {
                   telegramChatID: "${filter.telegramChatID}"
                 }) {
                   _id
-                  discordName
-                  conduct {
-                    telegram
-                    telegramChatID
-                    telegramConnectionCode
-                  }
+                  name
+                  done
+                  telegram
+                  telegramChatID
+                  authTelegramCode
               }
             }`,
     },
