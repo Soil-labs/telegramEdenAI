@@ -39,6 +39,8 @@ bot.on('message', async (msg) => {
 
   // --------------- check if first message TG connection ----------------
   let res = await checkIfFirstMessageTGConnection(msg)
+
+  console.log("res = " , res)
   if (res.done == true ){
     let messageSentTelegram = ""
     if (res.messageBack){
@@ -67,12 +69,12 @@ bot.on('message', async (msg) => {
 
 
 // --------------- Sent Message for un-send queries --------------
-const speed_CheckQueriesAndSent = 12000;
+const speed_CheckQueriesAndSent = 10000;
 let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
 // --------------- Sent Message for un-send queries --------------
 
 // --------------- Sent Message for un-send Responses --------------
-const speed_CheckResponsesAndSent = 8000;
+const speed_CheckResponsesAndSent = 14000;
 let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
 // --------------- Sent Message for un-send Responses --------------
 
@@ -83,10 +85,10 @@ async function checkResponsesAndSentFunc() {
     sentFlag: false,
     phase: "RESPONDED",
   });
-  // console.log("findQueryResponsesRes = " , findQueryResponsesRes)
+  console.log("findQueryResponsesRes RESPONDED= " , findQueryResponsesRes)
 
   for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
-  // for (let i = 0; i < 1; i++) { // for all the queries
+  // for (let i = 0; i < 1; i++) { amaz// for all the queries
 
 
     let queryResponse = findQueryResponsesRes[i];
@@ -142,7 +144,7 @@ async function checkQueriesAndSentFunc() {
     sentFlag: false,
     phase: "QUERY",
   });
-  // console.log("findQueryResponsesRes = " , findQueryResponsesRes)
+  console.log("findQueryResponsesRes QUERY= " , findQueryResponsesRes)
 
   for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
   // for (let i = 0; i < 1; i++) { // for all the queries
