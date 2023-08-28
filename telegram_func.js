@@ -1,6 +1,7 @@
 import {
     checkUsersForTGConnection,
     findMember,
+    findPosition,
     findQueryResponses,
     updateQueryResponse,
   } from "./backEnd_api_func.js";
@@ -27,7 +28,7 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
         let messageBack = "This is not the right code try again please"
         if (resCheck._id) {
-            messageBack = `hello ${resCheck.discordName}!!! you are connected I can't wait to find the perfect opportunity for you`
+            messageBack = `hello ${resCheck.name}!!! you are connected I can't wait to find the perfect opportunity for you`
         }
 
 
@@ -53,14 +54,19 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
     let res
     if (conduct.positionID != null) {
-
+        res = await findPosition({
+            _id: conduct.positionID
+        });
+        if (res?.conduct?.telegramChatID) {
+            return res.conduct.telegramChatID;
+        }
     } else if (conduct.userID != null) {
-      res = await findMember({
-        _id: conduct.userID
-      });
-      if (res?.conduct?.telegramChatID) {
-        return res.conduct.telegramChatID;
-      }
+        res = await findMember({
+            _id: conduct.userID
+        });
+        if (res?.conduct?.telegramChatID) {
+            return res.conduct.telegramChatID;
+        }
     }
  
   }
@@ -71,14 +77,31 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
         telegramChatID: chatId
     });
 
-    console.log("memberData = " , memberData)
+    let findQueryResponsesRes
 
-    let findQueryResponsesRes = await findQueryResponses({
-        sentFlag: true,
-        phase: "QUERY",
-        responderType: "USER",
-        responderID: memberData._id,
-    });
+    if (!memberData) {
+        let positionData = await findPosition({
+            telegramChatID: chatId
+        });
+
+        findQueryResponsesRes = await findQueryResponses({
+            sentFlag: true,
+            phase: "QUERY",
+            responderType: "POSITION",
+            responderID: positionData._id,
+        });
+
+    } else {
+
+        console.log("change = -d-d-d-d-d-d" )
+
+        findQueryResponsesRes = await findQueryResponses({
+            sentFlag: true,
+            phase: "QUERY",
+            responderType: "USER",
+            responderID: memberData._id,
+        });
+    }
 
 
 
