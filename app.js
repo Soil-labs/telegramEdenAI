@@ -30,8 +30,14 @@ console.log("I am alive!");
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
 
-  if (!chatId) {
+  if (!chatId || !msg.text) {
     return
+  }
+  
+  if (msg.text == "/start") {
+    bot.sendMessage(chatId, 'Welcome to Eden Personal Coach \nWrite the 3 digit number to connect with your Eden account' );
+
+    return 
   }
 
   console.log("msg = " , msg)
@@ -85,7 +91,7 @@ async function checkResponsesAndSentFunc() {
     sentFlag: false,
     phase: "RESPONDED",
   });
-  console.log("findQueryResponsesRes RESPONDED= " , findQueryResponsesRes)
+  // console.log("findQueryResponsesRes RESPONDED= " , findQueryResponsesRes)
 
   for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
   // for (let i = 0; i < 1; i++) { amaz// for all the queries
@@ -144,7 +150,7 @@ async function checkQueriesAndSentFunc() {
     sentFlag: false,
     phase: "QUERY",
   });
-  console.log("findQueryResponsesRes QUERY= " , findQueryResponsesRes)
+  // console.log("findQueryResponsesRes QUERY= " , findQueryResponsesRes)
 
   for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
   // for (let i = 0; i < 1; i++) { // for all the queries
