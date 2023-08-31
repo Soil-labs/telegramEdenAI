@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import {
   findQueryResponses,
   updateQueryResponse,
+  identifyCategoryAndReply,
 } from "./backEnd_api_func.js";
 
 import {
@@ -61,9 +62,25 @@ bot.on('message', async (msg) => {
   
   findIfMessageIsAResponse(chatId,msg.text)
   
-  bot.sendMessage(chatId, 'Thank you for the answer' );
+
+  let resIdentify = await identifyCategoryAndReply({
+    message: msg.text,
+    replyFlag: true,
+  })
+
+
+  console.log("resIdentify = " , resIdentify)
+
+
+  if (resIdentify.reply){
+    bot.sendMessage(chatId, resIdentify.reply );
+  } else {
+    bot.sendMessage(chatId, "I did not understand you" );
+  }
+
     
   
+  return 
 
 });
 // --------------- telegram bot ----------------
