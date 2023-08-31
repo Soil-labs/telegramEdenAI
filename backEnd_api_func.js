@@ -23,7 +23,6 @@ answer {
 `;
 
 export async function findMember(filter) {
-  // filter = { _id, discordName,telegramChatID}
 
   const textUpdate = filterToText(filter)
 
@@ -85,6 +84,34 @@ export async function findPosition(filter) {
 
   if (res?.data?.data?.findPosition) {
     return res.data.data.findPosition;
+  } else {
+    return [];
+  }
+}
+
+export async function identifyCategoryAndReply(filter) {
+
+  const textUpdate = filterToText(filter)
+
+  let res = await apiClient({
+    data: {
+      query: `query {
+                identifyCategoryAndReply(fields: {
+                  ${textUpdate}
+                }) {
+                  category
+                  reply
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
+  });
+
+  if (res?.data?.data?.identifyCategoryAndReply) {
+    return res.data.data.identifyCategoryAndReply;
   } else {
     return [];
   }
@@ -221,6 +248,14 @@ function filterToText(filter) {
 
   if (filter.telegramChatID) {
     filterText += `telegramChatID: "${filter.telegramChatID}"\n`;
+  }
+
+  if (filter.message) {
+    filterText += `message: "${filter.message}"\n`;
+  }
+
+  if (filter.replyFlag) {
+    filterText += `replyFlag: ${filter.replyFlag}\n`;
   }
 
   return filterText;
