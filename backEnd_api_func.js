@@ -117,6 +117,42 @@ export async function identifyCategoryAndReply(filter) {
   }
 }
 
+export async function addChatExternalApp(filter) {
+
+  const textUpdate = filterToText(filter)
+
+  console.log("textUpdate = \n" , textUpdate)
+
+  let res = await apiClient({
+    data: {
+      query: `mutation {
+                addChatExternalApp(fields: {
+                  ${textUpdate}
+                }) {
+                  _id
+                  chatID_TG
+                  userID
+                  projectID
+                  communicationAuthorType
+                  message
+                  senderRole
+                  timeStamp
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log("r = ",err.response.data.errors);
+    }
+  });
+
+  if (res?.data?.data?.addChatExternalApp) {
+    return res.data.data.addChatExternalApp;
+  } else {
+    return [];
+  }
+}
+
 
 export async function checkUsersForTGConnection(filter) {
 
@@ -182,7 +218,7 @@ export async function updateQueryResponse(updateQuery) {
 
   const textUpdate = filterToText(updateQuery)
 
-  console.log("textUpdate = " , textUpdate)
+  console.log("textUpdate = \n" , textUpdate)
 
   let res = await apiClient({
     data: {
@@ -196,7 +232,7 @@ export async function updateQueryResponse(updateQuery) {
     },
   }).catch((err) => {
     if (err?.response?.data?.errors) {
-      console.log(err.response.data.errors);
+      console.log("f = ",err.response.data.errors);
     }
   });
 
@@ -251,11 +287,27 @@ function filterToText(filter) {
   }
 
   if (filter.message) {
-    filterText += `message: "${filter.message}"\n`;
+    filterText += `message: "${filter.message.replace(/\n/g, '\\n')}"\n`;
   }
 
   if (filter.replyFlag) {
     filterText += `replyFlag: ${filter.replyFlag}\n`;
+  }
+
+  if (filter.chatID_TG) {
+    filterText += `chatID_TG: "${filter.chatID_TG}"\n`;
+  }
+
+  if (filter.userID) {
+    filterText += `userID: "${filter.userID}"\n`;
+  }
+
+  if (filter.communicationAuthorType) {
+    filterText += `communicationAuthorType: ${filter.communicationAuthorType}\n`;
+  }
+
+  if (filter.senderRole) {
+    filterText += `senderRole: ${filter.senderRole}\n`;
   }
 
   return filterText;
