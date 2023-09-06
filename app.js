@@ -3,6 +3,7 @@ import {
   findQueryResponses,
   updateQueryResponse,
   identifyCategoryAndReply,
+  addChatExternalApp,
 } from "./backEnd_api_func.js";
 
 import {
@@ -44,6 +45,15 @@ bot.on('message', async (msg) => {
   console.log("msg = " , msg)
 
 
+  // --------------- save message from TG to database ----------------
+  await addChatExternalApp({
+    chatID_TG: chatId,
+    message: msg.text,
+    senderRole: "user",
+  })
+  // --------------- save message from TG to database ----------------
+
+
   // --------------- check if first message TG connection ----------------
   let res = await checkIfFirstMessageTGConnection(msg)
 
@@ -64,6 +74,7 @@ bot.on('message', async (msg) => {
   
 
   let resIdentify = await identifyCategoryAndReply({
+    chatID_TG: chatId,
     message: msg.text,
     replyFlag: true,
   })
@@ -71,13 +82,26 @@ bot.on('message', async (msg) => {
 
   console.log("resIdentify = " , resIdentify)
 
+  let messageReplyT = ""
 
   if (resIdentify.reply){
-    bot.sendMessage(chatId, resIdentify.reply );
+    messageReplyT = resIdentify.reply
   } else {
-    bot.sendMessage(chatId, "I did not understand you" );
+    messageReplyT = "I didn't understand, please try again"
+
   }
 
+  bot.sendMessage(chatId,messageReplyT );
+
+
+
+   // --------------- save message from TG to database ----------------
+   await addChatExternalApp({
+    chatID_TG: chatId,
+    message: messageReplyT,
+    senderRole: "assistant",
+  })
+  // --------------- save message from TG to database ----------------
     
   
   return 
@@ -91,15 +115,15 @@ bot.on('message', async (msg) => {
 
 
 
-// --------------- Sent Message for un-send queries --------------
-const speed_CheckQueriesAndSent = 10000;
-let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
-// --------------- Sent Message for un-send queries --------------
+// // --------------- Sent Message for un-send queries --------------
+// const speed_CheckQueriesAndSent = 10000;
+// let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
+// // --------------- Sent Message for un-send queries --------------
 
-// --------------- Sent Message for un-send Responses --------------
-const speed_CheckResponsesAndSent = 14000;
-let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
-// --------------- Sent Message for un-send Responses --------------
+// // --------------- Sent Message for un-send Responses --------------
+// const speed_CheckResponsesAndSent = 14000;
+// let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
+// // --------------- Sent Message for un-send Responses --------------
 
 async function checkResponsesAndSentFunc() {
 
@@ -151,6 +175,14 @@ async function checkResponsesAndSentFunc() {
       sentFlag: true,
     })
     // --------------- update backend that message was sent ----------------
+
+     // --------------- save message from TG to database ----------------
+      await addChatExternalApp({
+        chatID_TG: chatID,
+        message: messageSendRes,
+        senderRole: "assistant",
+      })
+      // --------------- save message from TG to database ----------------
   }
   
 
@@ -199,6 +231,14 @@ async function checkQueriesAndSentFunc() {
       sentFlag: true,
     })
     // --------------- update backend that message was sent ----------------
+
+    // --------------- save message from TG to database ----------------
+    await addChatExternalApp({
+      chatID_TG: chatID,
+      message: messageSendRes,
+      senderRole: "assistant",
+    })
+    // --------------- save message from TG to database ----------------
 
   }
   
