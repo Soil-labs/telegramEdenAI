@@ -37,7 +37,7 @@ bot.on('message', async (msg) => {
   }
   
   if (msg.text == "/start") {
-    bot.sendMessage(chatId, 'Welcome to Eden Personal Coach \nWrite the 3 digit number to connect with your Eden account' );
+    bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
 
     return 
   }
