@@ -28,7 +28,10 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
         let messageBack = "This is not the right code try again please"
         if (resCheck._id) {
-            messageBack = `hello ${resCheck.name}!!! you are connected I can't wait to find the perfect opportunity for you`
+            messageBack = `Hi ${resCheck.name}, 
+            Was great chatting to you earlier! I'll inform you of any updates here - also feel free to ask me any type of questions relating to your application. I'll do my best to answer them! 
+
+            For now, please finalise your application by going back to your application`
         }
 
 

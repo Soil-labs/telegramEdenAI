@@ -3,6 +3,7 @@ import {
   findQueryResponses,
   updateQueryResponse,
   identifyCategoryAndReply,
+  addChatExternalApp,
 } from "./backEnd_api_func.js";
 
 import {
@@ -36,12 +37,21 @@ bot.on('message', async (msg) => {
   }
   
   if (msg.text == "/start") {
-    bot.sendMessage(chatId, 'Welcome to Eden Personal Coach \nWrite the 3 digit number to connect with your Eden account' );
+    bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
 
     return 
   }
 
   console.log("msg = " , msg)
+
+
+  // --------------- save message from TG to database ----------------
+  await addChatExternalApp({
+    chatID_TG: chatId,
+    message: msg.text,
+    senderRole: "user",
+  })
+  // --------------- save message from TG to database ----------------
 
 
   // --------------- check if first message TG connection ----------------
@@ -64,6 +74,7 @@ bot.on('message', async (msg) => {
   
 
   let resIdentify = await identifyCategoryAndReply({
+    chatID_TG: chatId,
     message: msg.text,
     replyFlag: true,
   })
@@ -71,13 +82,26 @@ bot.on('message', async (msg) => {
 
   console.log("resIdentify = " , resIdentify)
 
+  let messageReplyT = ""
 
   if (resIdentify.reply){
-    bot.sendMessage(chatId, resIdentify.reply );
+    messageReplyT = resIdentify.reply
   } else {
-    bot.sendMessage(chatId, "I did not understand you" );
+    messageReplyT = "I didn't understand, please try again"
+
   }
 
+  bot.sendMessage(chatId,messageReplyT );
+
+
+
+   // --------------- save message from TG to database ----------------
+   await addChatExternalApp({
+    chatID_TG: chatId,
+    message: messageReplyT,
+    senderRole: "assistant",
+  })
+  // --------------- save message from TG to database ----------------
     
   
   return 
@@ -151,6 +175,14 @@ async function checkResponsesAndSentFunc() {
       sentFlag: true,
     })
     // --------------- update backend that message was sent ----------------
+
+     // --------------- save message from TG to database ----------------
+      await addChatExternalApp({
+        chatID_TG: chatID,
+        message: messageSendRes,
+        senderRole: "assistant",
+      })
+      // --------------- save message from TG to database ----------------
   }
   
 
@@ -199,6 +231,14 @@ async function checkQueriesAndSentFunc() {
       sentFlag: true,
     })
     // --------------- update backend that message was sent ----------------
+
+    // --------------- save message from TG to database ----------------
+    await addChatExternalApp({
+      chatID_TG: chatID,
+      message: messageSendRes,
+      senderRole: "assistant",
+    })
+    // --------------- save message from TG to database ----------------
 
   }
   
