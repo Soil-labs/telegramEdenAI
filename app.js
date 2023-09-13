@@ -37,7 +37,7 @@ bot.on('message', async (msg) => {
   }
   
   if (msg.text == "/start") {
-    bot.sendMessage(chatId, 'Welcome to Eden Personal Coach \nWrite the 3 digit number to connect with your Eden account' );
+    bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
 
     return 
   }
@@ -115,15 +115,15 @@ bot.on('message', async (msg) => {
 
 
 
-// // --------------- Sent Message for un-send queries --------------
-// const speed_CheckQueriesAndSent = 10000;
-// let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
-// // --------------- Sent Message for un-send queries --------------
+// --------------- Sent Message for un-send queries --------------
+const speed_CheckQueriesAndSent = 10000;
+let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
+// --------------- Sent Message for un-send queries --------------
 
-// // --------------- Sent Message for un-send Responses --------------
-// const speed_CheckResponsesAndSent = 14000;
-// let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
-// // --------------- Sent Message for un-send Responses --------------
+// --------------- Sent Message for un-send Responses --------------
+const speed_CheckResponsesAndSent = 14000;
+let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
+// --------------- Sent Message for un-send Responses --------------
 
 async function checkResponsesAndSentFunc() {
 
