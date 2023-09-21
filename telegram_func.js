@@ -50,6 +50,57 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
  
   }
 
+  export async function createMessageBasedOnCategory(queryResponse) {
+
+
+    let messageSendRes = ""
+
+    if (queryResponse.category == "REJECT_CANDIDATE"){
+
+        console.log("queryResponse = " , queryResponse)
+
+        messageSendRes = `${queryResponse?.question?.content}`
+
+    } else if (queryResponse.category == "ASK_CANDIDATE"){    
+
+        messageSendRes = `Wow people are looking at your profile, you have a question:
+        ${queryResponse?.question?.content}`
+
+    } else {
+        messageSendRes = `Wow people are looking at your profile, you have a question:
+        ${queryResponse?.question?.content}`
+    }
+
+    return messageSendRes
+ 
+  }
+
+  export async function sentMessageBasedOnCategory(chatID, messageSendRes,queryResponse,bot) {
+
+    if (!chatID) 
+        return
+
+
+    if (queryResponse.category == "REJECT_CANDIDATE"){
+
+        await bot.sendMessage(chatID, messageSendRes);
+
+        bot.sendMessage(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?");
+
+
+    } else if (queryResponse.category == "ASK_CANDIDATE"){    
+
+        bot.sendMessage(chatID, messageSendRes);
+
+    } else {
+        bot.sendMessage(chatID, messageSendRes);
+    }
+    
+
+
+ 
+  }
+
   export async function findChatIDforUser(conduct) {
     // conduct = { positionID: "null", userID: '234' },
     // or 
@@ -67,6 +118,7 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
         res = await findMember({
             _id: conduct.userID
         });
+        console.log("res = " , res)
         if (res?.conduct?.telegramChatID) {
             return res.conduct.telegramChatID;
         }
