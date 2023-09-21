@@ -4,12 +4,15 @@ import {
   updateQueryResponse,
   identifyCategoryAndReply,
   addChatExternalApp,
+  findMember,
 } from "./backEnd_api_func.js";
 
 import {
   checkIfFirstMessageTGConnection,
   findChatIDforUser,
   findIfMessageIsAResponse,
+  createMessageBasedOnCategory,
+  sentMessageBasedOnCategory,
 } from "./telegram_func.js";
 
 
@@ -40,6 +43,17 @@ bot.on('message', async (msg) => {
     bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
 
     return 
+  } else if (msg.text == "/who") {
+
+    let memberData = await findMember({
+        telegramChatID: chatId
+    });
+
+    bot.sendMessage(chatId, `Your Name is: ${memberData.discordName}
+    your ID is: ${memberData._id}` );
+
+    return 
+
   }
 
   console.log("msg = " , msg)
@@ -120,10 +134,69 @@ const speed_CheckQueriesAndSent = 10000;
 let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
 // --------------- Sent Message for un-send queries --------------
 
-// --------------- Sent Message for un-send Responses --------------
-const speed_CheckResponsesAndSent = 14000;
-let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
-// --------------- Sent Message for un-send Responses --------------
+// // --------------- Sent Message for un-send Responses --------------
+// const speed_CheckResponsesAndSent = 14000;
+// let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
+// // --------------- Sent Message for un-send Responses --------------
+
+
+
+
+async function checkQueriesAndSentFunc() {
+
+
+  let findQueryResponsesRes = await findQueryResponses({
+    sentFlag: false,
+    phase: "QUERY",
+  });
+  // console.log("findQueryResponsesRes QUERY= " , findQueryResponsesRes)
+
+  for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
+  // for (let i = 0; i < 1; i++) { // for all the queries
+
+    let queryResponse = findQueryResponsesRes[i];
+
+    const chatID = await findChatIDforUser(queryResponse.responder)
+    console.log("chatID = " , chatID)
+
+
+  
+
+    let messageSendRes = await createMessageBasedOnCategory(queryResponse)
+
+    
+
+    
+    // --------------- send message Telegram ----------------
+    sentMessageBasedOnCategory(chatID,messageSendRes,queryResponse,bot)
+    // if (chatID) {
+    //   bot.sendMessage(chatID, messageSendRes);
+    // }
+    // --------------- send message Telegram ----------------
+
+
+    // --------------- update backend that message was sent ----------------
+    let res = await updateQueryResponse({
+      _id: queryResponse._id,
+      sentFlag: true,
+    })
+    // --------------- update backend that message was sent ----------------
+
+    // --------------- save message from TG to database ----------------
+    await addChatExternalApp({
+      chatID_TG: chatID,
+      message: messageSendRes,
+      senderRole: "assistant",
+    })
+    // --------------- save message from TG to database ----------------
+
+  }
+  
+
+  clearInterval(repeatCheckQueriesAndSentVar);
+  repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
+}
+
 
 async function checkResponsesAndSentFunc() {
 
@@ -189,64 +262,6 @@ async function checkResponsesAndSentFunc() {
   clearInterval(repeatCheckResponsesAndSentVar);
   repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
 }
-
-
-
-async function checkQueriesAndSentFunc() {
-
-
-  let findQueryResponsesRes = await findQueryResponses({
-    sentFlag: false,
-    phase: "QUERY",
-  });
-  // console.log("findQueryResponsesRes QUERY= " , findQueryResponsesRes)
-
-  for (let i = 0; i < findQueryResponsesRes.length; i++) { // for all the queries
-  // for (let i = 0; i < 1; i++) { // for all the queries
-
-    let queryResponse = findQueryResponsesRes[i];
-
-    // let messageSendRes = await messageSend(queryResponse); // what is the message to send
-    let messageSendRes = `Wow people are looking at your profile, you have a question:
-    ${queryResponse?.question?.content}`
-
-
-    console.log("messageSendRes = " , messageSendRes)
-    console.log("queryResponse._id = " , queryResponse._id)
-
-
-    const chatID = await findChatIDforUser(queryResponse.responder)
-
-    console.log("chatID = " , chatID)
-
-
-    // --------------- send message Telegram ----------------
-    bot.sendMessage(chatID, messageSendRes);
-    // --------------- send message Telegram ----------------
-
-
-    // --------------- update backend that message was sent ----------------
-    let res = await updateQueryResponse({
-      _id: queryResponse._id,
-      sentFlag: true,
-    })
-    // --------------- update backend that message was sent ----------------
-
-    // --------------- save message from TG to database ----------------
-    await addChatExternalApp({
-      chatID_TG: chatID,
-      message: messageSendRes,
-      senderRole: "assistant",
-    })
-    // --------------- save message from TG to database ----------------
-
-  }
-  
-
-  clearInterval(repeatCheckQueriesAndSentVar);
-  repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
-}
-
 
 async function messageSend(queryResponse) {
 
