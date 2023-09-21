@@ -20,6 +20,7 @@ question {
 answer {
   content
 }
+category
 `;
 
 export async function findMember(filter) {
@@ -287,6 +288,7 @@ function filterToText(filter) {
   }
 
   if (filter.message) {
+    console.log("filter.message = " , filter.message)
     filterText += `message: "${filter.message.replace(/\n/g, '\\n')}"\n`;
   }
 
