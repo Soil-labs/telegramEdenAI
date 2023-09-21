@@ -134,10 +134,10 @@ const speed_CheckQueriesAndSent = 10000;
 let repeatCheckQueriesAndSentVar = setInterval(checkQueriesAndSentFunc, speed_CheckQueriesAndSent);
 // --------------- Sent Message for un-send queries --------------
 
-// // --------------- Sent Message for un-send Responses --------------
-// const speed_CheckResponsesAndSent = 14000;
-// let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
-// // --------------- Sent Message for un-send Responses --------------
+// --------------- Sent Message for un-send Responses --------------
+const speed_CheckResponsesAndSent = 14000;
+let repeatCheckResponsesAndSentVar = setInterval(checkResponsesAndSentFunc, speed_CheckResponsesAndSent);
+// --------------- Sent Message for un-send Responses --------------
 
 
 
