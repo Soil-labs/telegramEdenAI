@@ -13,6 +13,7 @@ import {
   findIfMessageIsAResponse,
   createMessageBasedOnCategory,
   sentMessageBasedOnCategory,
+  sentBotMessageAndSaveBackend,
 } from "./telegram_func.js";
 
 
@@ -40,7 +41,9 @@ bot.on('message', async (msg) => {
   }
   
   if (msg.text == "/start") {
-    bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
+    // bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
+
+    await sentBotMessageAndSaveBackend(chatId,`Let's do this! 👏 Can you write the 3 digit code I gave you earlier?`,bot)
 
     return 
   } else if (msg.text == "/who") {
@@ -49,8 +52,11 @@ bot.on('message', async (msg) => {
         telegramChatID: chatId
     });
 
-    bot.sendMessage(chatId, `Your Name is: ${memberData.discordName}
-    your ID is: ${memberData._id}` );
+    // bot.sendMessage(chatId, `Your Name is: ${memberData.discordName}
+    // your ID is: ${memberData._id}` );
+
+    await sentBotMessageAndSaveBackend(chatId,`Your Name is: ${memberData.discordName}
+    your ID is: ${memberData._id}`,bot)
 
     return 
 
@@ -59,13 +65,13 @@ bot.on('message', async (msg) => {
   console.log("msg = " , msg)
 
 
-  // --------------- save message from TG to database ----------------
-  await addChatExternalApp({
-    chatID_TG: chatId,
-    message: msg.text,
-    senderRole: "user",
-  })
-  // --------------- save message from TG to database ----------------
+  // // --------------- save message from TG to database ----------------
+  // await addChatExternalApp({
+  //   chatID_TG: chatId,
+  //   message: msg.text,
+  //   senderRole: "user",
+  // })
+  // // --------------- save message from TG to database ----------------
 
 
   // --------------- check if first message TG connection ----------------
@@ -77,7 +83,8 @@ bot.on('message', async (msg) => {
     if (res.messageBack){
       messageSentTelegram = res.messageBack
     }
-    bot.sendMessage(chatId, messageSentTelegram);
+    // bot.sendMessage(chatId, messageSentTelegram);
+    await sentBotMessageAndSaveBackend(chatId,messageSentTelegram,bot)
 
     return 
   } 
@@ -105,17 +112,18 @@ bot.on('message', async (msg) => {
 
   }
 
-  bot.sendMessage(chatId,messageReplyT );
+  // bot.sendMessage(chatId,messageReplyT );
+  await sentBotMessageAndSaveBackend(chatId,messageReplyT,bot)
 
 
 
-   // --------------- save message from TG to database ----------------
-   await addChatExternalApp({
-    chatID_TG: chatId,
-    message: messageReplyT,
-    senderRole: "assistant",
-  })
-  // --------------- save message from TG to database ----------------
+  //  // --------------- save message from TG to database ----------------
+  //  await addChatExternalApp({
+  //   chatID_TG: chatId,
+  //   message: messageReplyT,
+  //   senderRole: "assistant",
+  // })
+  // // --------------- save message from TG to database ----------------
     
   
   return 
@@ -182,13 +190,13 @@ async function checkQueriesAndSentFunc() {
     })
     // --------------- update backend that message was sent ----------------
 
-    // --------------- save message from TG to database ----------------
-    await addChatExternalApp({
-      chatID_TG: chatID,
-      message: messageSendRes,
-      senderRole: "assistant",
-    })
-    // --------------- save message from TG to database ----------------
+    // // --------------- save message from TG to database ----------------
+    // await addChatExternalApp({
+    //   chatID_TG: chatID,
+    //   message: messageSendRes,
+    //   senderRole: "assistant",
+    // })
+    // // --------------- save message from TG to database ----------------
 
   }
   
@@ -237,7 +245,8 @@ async function checkResponsesAndSentFunc() {
 
     if (chatID && messageSendRes){
       // --------------- send message Telegram ----------------
-      bot.sendMessage(chatID, messageSendRes);
+      // bot.sendMessage(chatID, messageSendRes);
+      await sentBotMessageAndSaveBackend(chatID,messageSendRes,bot)
       // --------------- send message Telegram ----------------
     }
 
@@ -249,13 +258,13 @@ async function checkResponsesAndSentFunc() {
     })
     // --------------- update backend that message was sent ----------------
 
-     // --------------- save message from TG to database ----------------
-      await addChatExternalApp({
-        chatID_TG: chatID,
-        message: messageSendRes,
-        senderRole: "assistant",
-      })
-      // --------------- save message from TG to database ----------------
+    //  // --------------- save message from TG to database ----------------
+    //   await addChatExternalApp({
+    //     chatID_TG: chatID,
+    //     message: messageSendRes,
+    //     senderRole: "assistant",
+    //   })
+    //   // --------------- save message from TG to database ----------------
   }
   
 

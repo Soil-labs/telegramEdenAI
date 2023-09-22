@@ -4,6 +4,7 @@ import {
     findPosition,
     findQueryResponses,
     updateQueryResponse,
+    addChatExternalApp,
   } from "./backEnd_api_func.js";
 
 export async function checkIfFirstMessageTGConnection(msgTG) {
@@ -50,6 +51,19 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
  
   }
 
+  export async function sentBotMessageAndSaveBackend(chatID, message,bot) {
+
+
+    await bot.sendMessage(chatID, message);
+
+    await addChatExternalApp({
+        chatID_TG: chatID,
+        message: message,
+        senderRole: "assistant",
+      })
+ 
+  }
+
   export async function createMessageBasedOnCategory(queryResponse) {
 
 
@@ -83,17 +97,21 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
     if (queryResponse.category == "REJECT_CANDIDATE"){
 
-        await bot.sendMessage(chatID, messageSendRes);
+        // await bot.sendMessage(chatID, messageSendRes);
+        await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
 
-        bot.sendMessage(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?");
+        // bot.sendMessage(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?");
+        await sentBotMessageAndSaveBackend(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?",bot);
 
 
     } else if (queryResponse.category == "ASK_CANDIDATE"){    
 
-        bot.sendMessage(chatID, messageSendRes);
+        // bot.sendMessage(chatID, messageSendRes);
+        await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
 
     } else {
-        bot.sendMessage(chatID, messageSendRes);
+        // bot.sendMessage(chatID, messageSendRes);
+        await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
     }
     
 
