@@ -92,6 +92,9 @@ export async function findPosition(filter) {
 
 export async function identifyCategoryAndReply(filter) {
 
+  console.log("filter 2 = \n" , filter)
+
+
   const textUpdate = filterToText(filter)
 
   let res = await apiClient({
