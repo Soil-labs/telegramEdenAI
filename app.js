@@ -177,9 +177,6 @@ async function checkQueriesAndSentFunc() {
     
     // --------------- send message Telegram ----------------
     sentMessageBasedOnCategory(chatID,messageSendRes,queryResponse,bot)
-    // if (chatID) {
-    //   bot.sendMessage(chatID, messageSendRes);
-    // }
     // --------------- send message Telegram ----------------
 
 
@@ -189,14 +186,6 @@ async function checkQueriesAndSentFunc() {
       sentFlag: true,
     })
     // --------------- update backend that message was sent ----------------
-
-    // // --------------- save message from TG to database ----------------
-    // await addChatExternalApp({
-    //   chatID_TG: chatID,
-    //   message: messageSendRes,
-    //   senderRole: "assistant",
-    // })
-    // // --------------- save message from TG to database ----------------
 
   }
   
@@ -258,13 +247,6 @@ async function checkResponsesAndSentFunc() {
     })
     // --------------- update backend that message was sent ----------------
 
-    //  // --------------- save message from TG to database ----------------
-    //   await addChatExternalApp({
-    //     chatID_TG: chatID,
-    //     message: messageSendRes,
-    //     senderRole: "assistant",
-    //   })
-    //   // --------------- save message from TG to database ----------------
   }
   
 
