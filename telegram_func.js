@@ -5,6 +5,7 @@ import {
     findQueryResponses,
     updateQueryResponse,
     addChatExternalApp,
+    updateStateEdenChat,
   } from "./backEnd_api_func.js";
 
 export async function checkIfFirstMessageTGConnection(msgTG) {
@@ -71,7 +72,13 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
 
     if (queryResponse.category == "REJECT_CANDIDATE"){
 
-        console.log("queryResponse = " , queryResponse)
+        messageSendRes = `${queryResponse?.question?.content}`
+
+    } else if (queryResponse.category == "ACCEPT_CANDIDATE"){    
+
+        messageSendRes = `${queryResponse?.question?.content}`
+
+    } else if (queryResponse.category == "PITCH_POSITION_CANDIDATE"){    
 
         messageSendRes = `${queryResponse?.question?.content}`
 
@@ -94,25 +101,64 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
     if (!chatID) 
         return
 
+    console.log("queryResponse.category = " , queryResponse.category)
+
 
     if (queryResponse.category == "REJECT_CANDIDATE"){
 
-        // await bot.sendMessage(chatID, messageSendRes);
         await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
 
-        // bot.sendMessage(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?");
         await sentBotMessageAndSaveBackend(chatID, "Do you want me to help you find a different opportunity, I already know so much about you so it will be easy?",bot);
 
+        await updateStateEdenChat({
+            userID: queryResponse.responder.userID,
+            positionIDs: [queryResponse.sender.positionID],
+            categoryChat: queryResponse.category,
+        })
+
+
+    } else if (queryResponse.category == "ACCEPT_CANDIDATE"){    
+
+        await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
+
+        await sentBotMessageAndSaveBackend(chatID, "Incredible job, we will conduct you with details in the next 24-48 hours about your next interview",bot);
+
+        await updateStateEdenChat({
+            userID: queryResponse.responder.userID,
+            positionIDs: [queryResponse.sender.positionID],
+            categoryChat: queryResponse.category,
+        })
+
+    } else if (queryResponse.category == "PITCH_POSITION_CANDIDATE"){    
+
+        await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
+
+        console.log("-=asdf-as=df-as=f-as=df-asdf-asdf-as=df-s="  )
+
+        await updateStateEdenChat({
+            userID: queryResponse.responder.userID,
+            positionIDs: [queryResponse.sender.positionID],
+            categoryChat: queryResponse.category,
+        })
 
     } else if (queryResponse.category == "ASK_CANDIDATE"){    
 
-        // bot.sendMessage(chatID, messageSendRes);
         await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
 
+        await updateStateEdenChat({
+            userID: queryResponse.responder.userID,
+            positionIDs: [queryResponse.sender.positionID],
+            categoryChat: queryResponse.category,
+        })
+
     } else {
-        // bot.sendMessage(chatID, messageSendRes);
+
         await sentBotMessageAndSaveBackend(chatID, messageSendRes,bot);
+
     }
+
+
+    
     
 
 

@@ -121,6 +121,39 @@ export async function identifyCategoryAndReply(filter) {
   }
 }
 
+export async function updateStateEdenChat(filter) {
+
+
+  const textUpdate = filterToText(filter)
+
+  let res = await apiClient({
+    data: {
+      query: `mutation {
+                updateStateEdenChat(fields: {
+                  ${textUpdate}
+                }) {
+                  _id
+                  discordName
+                  stateEdenChat {
+                    positionIDs
+                    categoryChat
+                  }
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log(err.response.data.errors);
+    }
+  });
+
+  if (res?.data?.data?.updateStateEdenChat) {
+    return res.data.data.updateStateEdenChat;
+  } else {
+    return [];
+  }
+}
+
 export async function addChatExternalApp(filter) {
 
   const textUpdate = filterToText(filter)
@@ -313,6 +346,15 @@ function filterToText(filter) {
 
   if (filter.senderRole) {
     filterText += `senderRole: ${filter.senderRole}\n`;
+  }
+
+  if (filter.positionIDs) {
+    filterText += `positionIDs: [${filter.positionIDs.map((item) => `"${item}"`)}]\n`;
+  } 
+
+
+  if (filter.categoryChat) {
+    filterText += `categoryChat: ${filter.categoryChat}\n`;
   }
 
   return filterText;
