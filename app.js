@@ -43,7 +43,7 @@ bot.on('message', async (msg) => {
   if (msg.text == "/start") {
     // bot.sendMessage(chatId, `Let's do this! 👏 Can you write the 3 digit code I gave you earlier?` );
 
-    await sentBotMessageAndSaveBackend(chatId,`Let's do this! 👏 Can you write the 3 digit code I gave you earlier?`,bot)
+    await sentBotMessageAndSaveBackend(chatId,`Let's do this! 👏 Can you write the 4 digit code I gave you earlier?`,bot)
 
     return 
   } else if (msg.text == "/who") {
@@ -55,8 +55,10 @@ bot.on('message', async (msg) => {
     // bot.sendMessage(chatId, `Your Name is: ${memberData.discordName}
     // your ID is: ${memberData._id}` );
 
-    await sentBotMessageAndSaveBackend(chatId,`Your Name is: ${memberData.discordName}
-    your ID is: ${memberData._id}`,bot)
+    await sentBotMessageAndSaveBackend(chatId,`
+    Your Name is: ${memberData.discordName}
+    Your ID is: ${memberData._id}
+    Your Telegram ID is: ${chatId}`,bot)
 
     return 
 
