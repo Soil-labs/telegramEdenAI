@@ -14,7 +14,7 @@ export async function checkIfFirstMessageTGConnection(msgTG) {
     
     // if message is only 3 letters
     // if all letters of message are numbers
-    if (message.length == 3 && message.match(/^[0-9]+$/) != null) {
+    if (message.length == 4 && message.match(/^[0-9]+$/) != null) {
 
         const chatId = msgTG.chat.id;
         const username = msgTG.chat.username;
