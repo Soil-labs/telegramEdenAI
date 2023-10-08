@@ -5,6 +5,7 @@ import {
   identifyCategoryAndReply,
   addChatExternalApp,
   findMember,
+  checkLimitMessagesExternalApp,
 } from "./backEnd_api_func.js";
 
 import {
@@ -67,14 +68,30 @@ bot.on('message', async (msg) => {
   console.log("msg = " , msg)
 
 
-  // // --------------- save message from TG to database ----------------
-  // await addChatExternalApp({
-  //   chatID_TG: chatId,
-  //   message: msg.text,
-  //   senderRole: "user",
-  // })
-  // // --------------- save message from TG to database ----------------
+  // --------------- save message from TG to database ----------------
+  await addChatExternalApp({
+    chatID_TG: chatId,
+    message: msg.text,
+    senderRole: "user",
+  })
+  // --------------- save message from TG to database ----------------
 
+
+  let resLimit = await checkLimitMessagesExternalApp({
+    chatID_TG: chatId,
+    limitMinute: 6,
+    limitHour: 13,
+    limitDay: 15,
+  })
+
+  
+
+
+  if ( resLimit.limitExceeded == true ){
+    await sentBotMessageAndSaveBackend(chatId,resLimit.message,bot)
+
+    return
+  }
 
   // --------------- check if first message TG connection ----------------
   let res = await checkIfFirstMessageTGConnection(msg)
