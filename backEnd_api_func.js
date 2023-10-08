@@ -190,6 +190,40 @@ export async function addChatExternalApp(filter) {
   }
 }
 
+export async function checkLimitMessagesExternalApp(filter) {
+
+  const textUpdate = filterToText(filter)
+
+  console.log("textUpdate = \n" , textUpdate)
+
+  let res = await apiClient({
+    data: {
+      query: `query {
+                checkLimitMessagesExternalApp(fields: {
+                  ${textUpdate}
+                }) {
+                  limitExceeded
+                  message
+                  limitExceededMinute
+                  limitExceededHour
+                  limitExceededDay
+              }
+            }`,
+    },
+  }).catch((err) => {
+    if (err?.response?.data?.errors) {
+      console.log("r = ",err.response.data.errors);
+    }
+  });
+
+
+  if (res?.data?.data?.checkLimitMessagesExternalApp) {
+    return res.data.data.checkLimitMessagesExternalApp;
+  } else {
+    return [];
+  }
+}
+
 
 export async function checkUsersForTGConnection(filter) {
 
@@ -355,6 +389,18 @@ function filterToText(filter) {
 
   if (filter.categoryChat) {
     filterText += `categoryChat: ${filter.categoryChat}\n`;
+  }
+
+  if (filter.limitMinute) {
+    filterText += `limitMinute: ${filter.limitMinute}\n`;
+  }
+
+  if (filter.limitHour) {
+    filterText += `limitHour: ${filter.limitHour}\n`;
+  }
+
+  if (filter.limitDay) {
+    filterText += `limitDay: ${filter.limitDay}\n`;
   }
 
   return filterText;
